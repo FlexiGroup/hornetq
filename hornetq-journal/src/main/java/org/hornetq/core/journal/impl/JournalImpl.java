@@ -3171,14 +3171,14 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
    @Override
    public void replicationSyncPreserveOldFiles()
    {
-      setAutoReclaim(false);
-      disableCompact();
+      setAutoReclaim(false);      
+      enableCompact();
    }
 
    @Override
    public void replicationSyncFinished()
    {
-      enableCompact();
+	  disableCompact();
       setAutoReclaim(true);
    }
 
