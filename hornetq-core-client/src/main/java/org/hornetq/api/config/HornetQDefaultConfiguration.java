@@ -113,5 +113,5 @@ public final class HornetQDefaultConfiguration
    public static final String PROP_PASSWORD_CODEC = "hornetq.passwordcodec";
 
    //10 minutes default
-   public static final long DEFAULT_JOURNAL_COMPACT_TIMED_INTERVAL = (1000 * 60 * 10);
+   public static final long DEFAULT_JOURNAL_COMPACT_TIMED_INTERVAL = -1;
 }
