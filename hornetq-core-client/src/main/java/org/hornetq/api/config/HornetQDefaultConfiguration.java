@@ -111,4 +111,7 @@ public final class HornetQDefaultConfiguration
    //properties passed to acceptor/connectors.
    public static final String PROP_MASK_PASSWORD = "hornetq.usemaskedpassword";
    public static final String PROP_PASSWORD_CODEC = "hornetq.passwordcodec";
+
+   //10 minutes default
+   public static final long DEFAULT_JOURNAL_COMPACT_TIMED_INTERVAL = (1000 * 60 * 10);
 }

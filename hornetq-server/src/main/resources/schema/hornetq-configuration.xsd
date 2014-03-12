@@ -182,6 +182,7 @@
                 <xsd:element maxOccurs="1" minOccurs="0" name="journal-min-files" type="xsd:int"/>
                 <xsd:element maxOccurs="1" minOccurs="0" name="journal-compact-percentage" type="xsd:int"/>
                 <xsd:element maxOccurs="1" minOccurs="0" name="journal-compact-min-files" type="xsd:int"/>
+                <xsd:element maxOccurs="1" minOccurs="0" name="journal-compact-timed-interval" type="xsd:long"/>
                 <xsd:element maxOccurs="1" minOccurs="0" name="journal-max-io" type="xsd:int"/>
                 <xsd:element maxOccurs="1" minOccurs="0" name="perf-blast-pages" type="xsd:int"/>
                 <xsd:element maxOccurs="1" minOccurs="0" name="run-sync-speed-test" type="xsd:boolean"/>

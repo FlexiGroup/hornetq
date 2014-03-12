@@ -237,6 +237,10 @@ public class ConfigurationImplTest extends UnitTestCase
          i = RandomUtil.randomInt();
          conf.setJournalCompactPercentage(i);
          Assert.assertEquals(i, conf.getJournalCompactPercentage());
+         
+         i = RandomUtil.randomInt();
+         conf.setJournalCompactTimedInterval(i);
+         Assert.assertEquals(i, conf.getJournalCompactTimedInterval());
 
          i = RandomUtil.randomInt();
          conf.setJournalBufferSize_AIO(i);
@@ -451,6 +455,10 @@ public class ConfigurationImplTest extends UnitTestCase
       i = RandomUtil.randomInt();
       conf.setJournalCompactPercentage(i);
       Assert.assertEquals(i, conf.getJournalCompactPercentage());
+      
+      i = RandomUtil.randomInt();
+      conf.setJournalCompactTimedInterval(i);
+      Assert.assertEquals(i, conf.getJournalCompactTimedInterval());
 
       i = RandomUtil.randomInt();
       conf.setJournalBufferSize_AIO(i);

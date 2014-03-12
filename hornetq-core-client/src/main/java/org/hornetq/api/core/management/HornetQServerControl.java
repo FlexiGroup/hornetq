@@ -160,6 +160,11 @@ public interface HornetQServerControl
     * Return the percentage of live data before compacting the journal.
     */
    int getJournalCompactPercentage();
+   
+   /**
+    * Return the interval between timed compacting of the journal.
+    */
+   long getJournalCompactTimedInterval();
 
    /**
     * Returns whether this server is using persistence and store data.

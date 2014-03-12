@@ -597,6 +597,11 @@ public final class FileConfigurationParser
                                                                          "journal-compact-percentage",
                                                                          config.getJournalCompactPercentage(),
                                                                          Validators.PERCENTAGE));
+      
+      config.setJournalCompactTimedInterval(XMLConfigurationUtil.getLong(e,
+              "journal-compact-timed-interval",
+              config.getJournalCompactTimedInterval(),
+              Validators.MINUS_ONE_OR_GT_ZERO));
 
       config.setLogJournalWriteRate(XMLConfigurationUtil.getBoolean(e,
                                                                     "log-journal-write-rate",

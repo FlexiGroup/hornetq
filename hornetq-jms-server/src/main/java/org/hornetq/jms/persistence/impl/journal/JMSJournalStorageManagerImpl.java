@@ -106,7 +106,8 @@ public class JMSJournalStorageManagerImpl implements JMSStorageManager
                                               bindingsJMS,
                                               "hornetq-jms",
                                               "jms",
-                                              1);
+                                              1,
+                                              config.getJournalCompactTimedInterval());
 
       if (replicator != null)
       {

@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -101,6 +102,11 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
    {
       HornetQJournalLogger.LOGGER.trace(message);
    }
+   
+   private static final void info(final String message)
+   {
+      HornetQJournalLogger.LOGGER.info(message);
+   }
 
    private static final void traceRecord(final String message)
    {
@@ -163,6 +169,8 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
    protected static final byte FILL_CHARACTER = (byte)'J';
 
    // Attributes ----------------------------------------------------
+   
+   private static long lastCompactTimeInMillis = 0L;
 
    private volatile boolean autoReclaim = true;
 
@@ -215,6 +223,18 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
    private final Reclaimer reclaimer = new Reclaimer();
 
    // Constructors --------------------------------------------------
+   
+   public JournalImpl(final int fileSize,
+           final int minFiles,
+           final int compactMinFiles,
+           final int compactPercentage,
+           final SequentialFileFactory fileFactory,
+           final String filePrefix,
+           final String fileExtension,
+           final int maxAIO)
+              {
+this(fileSize, minFiles, compactMinFiles, compactPercentage, fileFactory, filePrefix, fileExtension, maxAIO, 0, -1);
+}
 
    public JournalImpl(final int fileSize,
                       final int minFiles,
@@ -223,9 +243,10 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
                       final SequentialFileFactory fileFactory,
                       final String filePrefix,
                       final String fileExtension,
-                      final int maxAIO)
+                      final int maxAIO,
+                      final long timedCompactTimeIntervalInMillis)
                          {
-      this(fileSize, minFiles, compactMinFiles, compactPercentage, fileFactory, filePrefix, fileExtension, maxAIO, 0);
+      this(fileSize, minFiles, compactMinFiles, compactPercentage, fileFactory, filePrefix, fileExtension, maxAIO, 0, timedCompactTimeIntervalInMillis);
    }
 
 
@@ -236,7 +257,8 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
                       final SequentialFileFactory fileFactory,
                       final String filePrefix,
                       final String fileExtension,
-                      final int maxAIO, final int userVersion)
+                      final int maxAIO, final int userVersion,
+                      final long timedCompactTimeIntervalInMillis)
    {
       super(fileFactory.isSupportsCallbacks(), fileSize);
       if (fileSize % fileFactory.getAlignment() != 0)
@@ -277,6 +299,9 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
                                                    minFiles);
 
       this.userVersion = userVersion;
+      
+      initiateScheduledTimedCompact(timedCompactTimeIntervalInMillis);
+      
    }
 
    @Override
@@ -2111,7 +2136,7 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
       return false;
    }
 
-   private boolean needsCompact() throws Exception
+   private boolean needsCompact(int compactMinFiles) throws Exception
    {
       JournalFile[] dataFiles = getDataFiles();
 
@@ -2145,7 +2170,7 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
          return;
       }
 
-      if (!compactorEnabled.get() && needsCompact())
+      if (!compactorEnabled.get() && needsCompact(compactMinFiles))
       {
          scheduleCompact();
       }
@@ -2559,6 +2584,7 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
    /** This is an interception point for testcases, when the compacted files are written, before replacing the data structures */
    protected void onCompactDone()
    {
+	   lastCompactTimeInMillis = System.currentTimeMillis();
    }
 
    // Private
@@ -3194,4 +3220,43 @@ public class JournalImpl extends JournalBase implements TestableJournal, Journal
          throw new RuntimeException(e);
       }
    }
+   
+   private static boolean isScheduledTimedCompactInitiated = false;
+   
+	public void initiateScheduledTimedCompact(final long compactTimeIntervalInMillis) {
+		if (compactTimeIntervalInMillis > -1) {
+			if (!isScheduledTimedCompactInitiated) {
+				synchronized (JournalImpl.class) {
+					if (!isScheduledTimedCompactInitiated) {
+						ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+						scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+							@Override
+							public void run() {
+								long currentTimeInMillis = System.currentTimeMillis();
+								info("currentTimeInMillis: " + currentTimeInMillis);
+								info("lastCompactTimeInMillis: " + lastCompactTimeInMillis);
+								info("compactTimeIntervalInMillis: " + compactTimeIntervalInMillis);
+								if ((lastCompactTimeInMillis + compactTimeIntervalInMillis) < currentTimeInMillis) {
+									if (state != JournalState.LOADED) {
+										return;
+									}
+									try {
+										if (!compactorEnabled.get() && needsCompact(0)) {
+											info("Running timed scheduled compact");
+											scheduleCompact();
+										}
+									} catch (Exception e) {
+										HornetQJournalLogger.LOGGER.errorSchedulingCompacting(e);
+									}
+								}
+							}
+						}, compactTimeIntervalInMillis, compactTimeIntervalInMillis, TimeUnit.MILLISECONDS);
+						isScheduledTimedCompactInitiated = true;
+					}
+				}
+			}
+		}
+	}
+   
 }

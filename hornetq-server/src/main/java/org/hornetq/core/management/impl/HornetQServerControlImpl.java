@@ -396,6 +396,21 @@ public class HornetQServerControlImpl extends AbstractControl implements HornetQ
          blockOnIO();
       }
    }
+   
+   public long getJournalCompactTimedInterval()
+   {
+      checkStarted();
+
+      clearIO();
+      try
+      {
+         return configuration.getJournalCompactTimedInterval();
+      }
+      finally
+      {
+         blockOnIO();
+      }
+   }
 
    public boolean isPersistenceEnabled()
    {

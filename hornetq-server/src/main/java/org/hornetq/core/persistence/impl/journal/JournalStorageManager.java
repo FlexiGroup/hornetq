@@ -247,7 +247,8 @@ public class JournalStorageManager implements StorageManager
          bindingsFF,
          "hornetq-bindings",
          "bindings",
-         1);
+         1,
+         config.getJournalCompactTimedInterval());
 
       bindingsJournal = localBindings;
       originalBindingsJournal = localBindings;
@@ -298,7 +299,7 @@ public class JournalStorageManager implements StorageManager
          "hornetq-data",
          "hq",
          config.getJournalType() == JournalType.ASYNCIO ? config.getJournalMaxIO_AIO()
-            : config.getJournalMaxIO_NIO());
+            : config.getJournalMaxIO_NIO(), config.getJournalCompactTimedInterval());
 
       messageJournal = localMessage;
       originalMessageJournal = localMessage;

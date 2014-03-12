@@ -141,6 +141,8 @@ public class ConfigurationImpl implements Configuration
    protected int journalCompactMinFiles = HornetQDefaultConfiguration.DEFAULT_JOURNAL_COMPACT_MIN_FILES;
 
    protected int journalCompactPercentage = HornetQDefaultConfiguration.DEFAULT_JOURNAL_COMPACT_PERCENTAGE;
+   
+   private long journalCompactTimedInterval = HornetQDefaultConfiguration.DEFAULT_JOURNAL_COMPACT_TIMED_INTERVAL;
 
    protected int journalFileSize = HornetQDefaultConfiguration.DEFAULT_JOURNAL_FILE_SIZE;
 
@@ -820,6 +822,16 @@ public class ConfigurationImpl implements Configuration
    {
       journalCompactPercentage = percentage;
    }
+   
+   public long getJournalCompactTimedInterval() 
+   {
+      return journalCompactTimedInterval;
+   }
+
+   public void setJournalCompactTimedInterval(long journalCompactTimedInterval) 
+   {
+      this.journalCompactTimedInterval = journalCompactTimedInterval;
+   }
 
    public long getServerDumpInterval()
    {
@@ -1077,6 +1089,7 @@ public class ConfigurationImpl implements Configuration
       result = prime * result + journalBufferTimeout_NIO;
       result = prime * result + journalCompactMinFiles;
       result = prime * result + journalCompactPercentage;
+      result = prime * result + (int)(journalCompactTimedInterval ^ (journalCompactTimedInterval >>> 32));
       result = prime * result + ((journalDirectory == null) ? 0 : journalDirectory.hashCode());
       result = prime * result + journalFileSize;
       result = prime * result + journalMaxIO_AIO;
@@ -1279,6 +1292,8 @@ public class ConfigurationImpl implements Configuration
          return false;
       if (journalCompactPercentage != other.journalCompactPercentage)
          return false;
+      if (journalCompactTimedInterval != other.journalCompactTimedInterval)
+          return false;
       if (journalDirectory == null)
       {
          if (other.journalDirectory != null)

@@ -593,6 +593,18 @@ public interface Configuration extends Serializable
     * Sets the percentage of live data before compacting the journal.
     */
    void setJournalCompactPercentage(int percentage);
+   
+   /**
+    * Returns the time interval between compacting the journal independent on compactMinFiles value. 
+    * * <br>
+    * Default value is {@value org.hornetq.core.config.impl.ConfigurationImpl#DEFAULT_JOURNAL_COMPACT_TIMED_INTERVAL}.
+    */
+   public long getJournalCompactTimedInterval();
+
+   /**
+    * Sets the time interval between compacting the journal independent on compactMinFiles value. 
+    */
+   public void setJournalCompactTimedInterval(long journalCompactTimedInterval) ;
 
    /**
     * Returns the number of journal files to pre-create.

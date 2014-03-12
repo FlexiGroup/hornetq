@@ -86,6 +86,7 @@ public class FileConfigurationTest extends ConfigurationImplTest
       Assert.assertEquals(100, conf.getJournalMinFiles());
       Assert.assertEquals(123, conf.getJournalCompactMinFiles());
       Assert.assertEquals(33, conf.getJournalCompactPercentage());
+      Assert.assertEquals(3600000, conf.getJournalCompactTimedInterval());
 
       Assert.assertEquals("largemessagesdir", conf.getLargeMessagesDirectory());
       Assert.assertEquals(95, conf.getMemoryWarningThreshold());

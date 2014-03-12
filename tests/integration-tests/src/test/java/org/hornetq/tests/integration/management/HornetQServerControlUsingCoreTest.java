@@ -474,6 +474,11 @@ public class HornetQServerControlUsingCoreTest extends HornetQServerControlTest
          {
             return (Integer)proxy.retrieveAttributeValue("JournalCompactPercentage");
          }
+         
+         public long getJournalCompactTimedInterval()
+         {
+            return (Integer)proxy.retrieveAttributeValue("JournalCompactTimedInterval");
+         }
 
          public boolean isPersistenceEnabled()
          {
