@@ -168,4 +168,6 @@ public interface ClientSessionFactory
    ServerLocator getServerLocator();
 
    CoreRemotingConnection getConnection();
+
+    void checkConnection();
 }

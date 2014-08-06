@@ -1181,6 +1181,13 @@ public class ClientSessionFactoryImpl implements ClientSessionFactoryInternal, C
       }
    }
 
+    public void checkConnection(){
+        if (connection == null)
+        {
+            getConnectionWithRetry(1);
+        }
+    }
+
    public CoreRemotingConnection getConnection()
    {
       if (closed)

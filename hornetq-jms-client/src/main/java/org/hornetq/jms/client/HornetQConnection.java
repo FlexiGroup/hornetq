@@ -521,6 +521,8 @@ public class HornetQConnection implements TopicConnection, QueueConnection
    protected final HornetQSession
             createSessionInternal(final boolean isXA, final boolean transacted, int acknowledgeMode, final int type) throws JMSException
    {
+       sessionFactory.checkConnection();
+
       if (transacted)
       {
          acknowledgeMode = Session.SESSION_TRANSACTED;
